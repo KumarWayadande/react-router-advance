@@ -1,11 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./components/pages/Home";
-import EventsPage from "./components/pages/Events";
+import EventsPage, { loader as eventsLoader } from "./components/pages/Events";
 import EventDetailPage from "./components/pages/EventDetail";
 import NewEventPage from "./components/pages/NewEvent";
 import EditEventPage from "./components/pages/EditEvent";
 import RootLayout from "./components/pages/Root";
 import EventsRootLayout from "./components/pages/EventsRoot";
+import ErrorPage from "./components/Error";
 
 // Challenge / Exercise
 
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
       {
@@ -42,16 +44,7 @@ const router = createBrowserRouter([
           {
             path: "",
             element: <EventsPage />,
-            loader: async () => {
-              const response = await fetch("http://localhost:8080/events");
-
-              if (!response.ok) {
-                // ...
-              } else {
-                const resData = await response.json();
-                return resData.events;
-              }
-            },
+            loader: eventsLoader,
           },
           { path: ":eventId", element: <EventDetailPage /> },
           { path: "new", element: <NewEventPage /> },
